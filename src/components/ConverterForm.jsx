@@ -67,7 +67,7 @@ const ConverterForm = () => {
                 </div>
 
                 <div className="swap-icon" onClick={handleSwapCurrencies}>
-                    {/* Your SVG icon here */}
+                   
                 </div>
 
                 <div className="form-section">
