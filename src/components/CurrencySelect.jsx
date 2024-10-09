@@ -1,4 +1,4 @@
-// Array of currency codes
+
 const currencyCodes = [
     "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
     "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL",
@@ -16,11 +16,11 @@ const currencyCodes = [
     "SSP", "STN", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY",
     "TTD", "TVD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VES",
     "VND", "VUV", "WST", "XAF", "XCD", "XOF", "XPF", "YER", "ZAR", "ZMW",
-    "ZWL"
+    "ZWL
 ];
 
 const CurrencySelect = ({ selectedCurrency, handleCurrency }) => {
-    // Extract the country code from the selected currency code
+   
     const countryCode = selectedCurrency.substring(0, 2);
 
     return (
