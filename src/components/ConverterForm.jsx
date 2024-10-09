@@ -4,7 +4,7 @@ import CurrencySelect from "./CurrencySelect";
 const ConverterForm = () => {
     const [fromCurrency, setFromCurrency] = useState("USD");
     const [toCurrency, setToCurrency] = useState("INR");
-    const [amount, setAmount] = useState(1); // Add amount state
+    const [amount, setAmount] = useState(1); 
     const [result, setResult] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
