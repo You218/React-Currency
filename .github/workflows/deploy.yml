@@ -1,0 +1,52 @@
+name: Deploy React-Currency to EC2
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_DIR: /home/${{ secrets.EC2_USER }}/react-currency
+      DIST_DIR: dist
+      NODE_ENV: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+        cache: npm
+
+    - name: Build
+      run: |
+        npm ci
+        npm run build
+
+    - name: Configure SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Upload build to EC2
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p $TARGET_DIR"
+        rsync -az --delete $DIST_DIR/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:$TARGET_DIR/
+
+    - name: Activate new version (Nginx symlink switch)
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<'EOF'
+          ln -sfn $TARGET_DIR /var/www/react-currency   # atomic swap
+          sudo nginx -t && sudo systemctl reload nginx
+        EOF
