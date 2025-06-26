@@ -16,7 +16,7 @@ const currencyCodes = [
     "SSP", "STN", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY",
     "TTD", "TVD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VES",
     "VND", "VUV", "WST", "XAF", "XCD", "XOF", "XPF", "YER", "ZAR", "ZMW",
-    "ZWL
+    "ZWL"
 ];
 
 const CurrencySelect = ({ selectedCurrency, handleCurrency }) => {
