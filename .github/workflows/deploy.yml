@@ -15,7 +15,6 @@ jobs:
     env:
       TARGET_DIR: /home/${{ secrets.EC2_USER }}/react-currency
       DIST_DIR: dist
-      NODE_ENV: production
 
     steps:
     - name: Checkout
