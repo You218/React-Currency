@@ -5,7 +5,7 @@ pipeline {
     environment {
         REPO_URL    = 'https://github.com/You218/React-Currency.git'
         DEPLOY_USER = 'deploy'
-        TARGET_HOST = '43.204.140.239/'
+        TARGET_HOST = '43.204.140.239'
         APP_DIR     = '/var/www/react-currency'
         NODE_ENV    = 'production'
     }
@@ -16,7 +16,8 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm install'
-                sh 'npm run build'
+                sh 'npx vite build'
+
             }
         }
         stage('Deploy') {
