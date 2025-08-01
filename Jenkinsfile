@@ -7,7 +7,7 @@ pipeline {
         DEPLOY_USER = 'deploy'
         TARGET_HOST = '43.204.140.239'
         APP_DIR     = '/var/www/react-currency'
-        NODE_ENV    = 'production'
+        NODE_ENV    = 'development'
     }
     stages {
         stage('Checkout') {
