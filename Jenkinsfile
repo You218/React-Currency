@@ -32,7 +32,7 @@ pipeline {
                     """
                     def releaseDir = "${APP_DIR}/releases/${params.DEPLOY_VERSION}"
                     sh "ssh ${DEPLOY_USER}@${TARGET_HOST} 'mkdir -p ${releaseDir}'"
-                    sh "scp -r build/* ${DEPLOY_USER}@${TARGET_HOST}:${releaseDir}/"
+                    sh "scp -r dist/* ${DEPLOY_USER}@${TARGET_HOST}:${releaseDir}/"
                     sh "ssh ${DEPLOY_USER}@${TARGET_HOST} 'ln -sfn ${releaseDir} ${APP_DIR}/current'"
                 }
             }
