@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    tools { nodejs 'Node16' }
+    parameters { string(name: 'DEPLOY_VERSION', defaultValue: 'v1.0.0') }
+    environment {
+        REPO_URL    = 'https://github.com/You218/React-Currency.git'
+        DEPLOY_USER = 'deploy'
+        TARGET_HOST = '43.204.140.239/'
+        APP_DIR     = '/var/www/react-currency'
+        NODE_ENV    = 'production'
+    }
+    stages {
+        stage('Checkout') {
+            steps { git branch: 'master', url: env.REPO_URL }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    sh """
+                      ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${TARGET_HOST} '
+                        mkdir -p ${APP_DIR}/releases &&
+                        cd ${APP_DIR}/releases &&
+                        ls -dt */ | tail -n +6 | xargs rm -rf || true
+                      '
+                    """
+                    def releaseDir = "${APP_DIR}/releases/${params.DEPLOY_VERSION}"
+                    sh "ssh ${DEPLOY_USER}@${TARGET_HOST} 'mkdir -p ${releaseDir}'"
+                    sh "scp -r build/* ${DEPLOY_USER}@${TARGET_HOST}:${releaseDir}/"
+                    sh "ssh ${DEPLOY_USER}@${TARGET_HOST} 'ln -sfn ${releaseDir} ${APP_DIR}/current'"
+                }
+            }
+        }
+    }
+    post {
+        success { echo "Deployed ${params.DEPLOY_VERSION} to ${TARGET_HOST}" }
+        failure {
+            echo "Deployment failed; rolling back"
+            script {
+                sh """
+                  ssh ${DEPLOY_USER}@${TARGET_HOST} '
+                    cd ${APP_DIR}/releases &&
+                    ls -dt */ | sed "1d" | head -n1 | xargs -I{} ln -sfn ${APP_DIR}/releases/{} ${APP_DIR}/current
+                  '
+                """
+            }
+            error("Rollback complete and build marked failed")
+        }
+    }
+}
